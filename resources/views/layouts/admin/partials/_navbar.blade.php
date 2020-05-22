@@ -1,3 +1,6 @@
+<?php
+    if (Auth::user()->role == 'Administrator') {
+?>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
     <a class="navbar-brand" href="{{ route('admin.index') }}">{{ config('app.name', 'IDBlog') }}</a>
     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,3 +72,15 @@
         </ul>
     </div>
 </nav>
+
+<?php }elseif(Auth::user()->role == 'Petugas Piket'){ ?>
+
+<?php }elseif(Auth::user()->role == 'Bimbingan Konseling'){ ?>
+
+<?php }elseif(Auth::user()->role == 'Petugas Gerbang'){?>
+
+<?php }elseif(Auth::user()->role == 'Wakil Kepala Sekolah Kesiswaan'){?>
+
+<?php }else{
+    
+} ?>
