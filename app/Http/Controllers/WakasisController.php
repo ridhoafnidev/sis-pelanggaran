@@ -36,211 +36,206 @@ class WakasisController extends Controller
     public function index(Request $request)
     {
         $set = Settings::all();
-        $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif )->get();
-        if(request()->ajax())
-        {
-            if(!empty($request->filter_ta))
-            {
+        $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif)->get();
+        if (request()->ajax()) {
+            if (!empty($request->filter_ta)) {
                 $data = DB::table('konseling')
-                ->join('pelanggaran_detail', 'pelanggaran_detail.id', '=', 'konseling.pelanggaran_detail_id')
-                ->join('tahun_ajaran', 'tahun_ajaran.id', '=', 'pelanggaran_detail.tahun_ajaran_id')
-                ->join('pelanggaran', 'pelanggaran.id', '=', 'pelanggaran_detail.pelanggaran_id')
-                ->join('jenis_pelanggaran', 'jenis_pelanggaran.id', '=', 'pelanggaran_detail.jenis_pelanggaran_id') 
-                ->join('siswa', 'siswa.nis', '=', 'pelanggaran_detail.nis')
-                ->join('jurusan', 'jurusan.id', '=', 'siswa.jurusan')
-                ->join('guru', 'guru.id', '=', 'pelanggaran.guru_id')
-                ->join('kehadiran', 'kehadiran.kode_kehadiran', '=', 'pelanggaran.kehadiran_id')
-                ->select(['konseling.*', 'pelanggaran_detail.*', 'konseling.id as id_konseling', 'tahun_ajaran.tahun_ajaran', 'konseling.keterangan as status', 'pelanggaran.guru_id', 'jenis_pelanggaran.poin as poin', 'jurusan.jurusan', 'pelanggaran.kehadiran_id', 'pelanggaran.nama_petugas', 'jenis_pelanggaran.jenis_pelanggaran', 'siswa.nis', 'siswa.nama_lengkap as nama_siswa', 'siswa.rombel', 'guru.nama_lengkap as nama_guru', 'kehadiran.jenis_kehadiran'])
-                ->where('pelanggaran_detail.tahun_ajaran_id', $request->filter_ta)
-                ->groupBy('pelanggaran_detail.nis')
-                ->get();
-            }else{
-                $data = DB::table('konseling')
-                ->join('pelanggaran_detail', 'pelanggaran_detail.id', '=', 'konseling.pelanggaran_detail_id')
-                ->join('tahun_ajaran', 'tahun_ajaran.id', '=', 'pelanggaran_detail.tahun_ajaran_id')
-                ->join('pelanggaran', 'pelanggaran.id', '=', 'pelanggaran_detail.pelanggaran_id')
-                ->join('jenis_pelanggaran', 'jenis_pelanggaran.id', '=', 'pelanggaran_detail.jenis_pelanggaran_id') 
-                ->join('siswa', 'siswa.nis', '=', 'pelanggaran_detail.nis')
-                ->join('jurusan', 'jurusan.id', '=', 'siswa.jurusan')
-                ->join('guru', 'guru.id', '=', 'pelanggaran.guru_id')
-                ->join('kehadiran', 'kehadiran.kode_kehadiran', '=', 'pelanggaran.kehadiran_id')
-                ->select(['konseling.*', 'pelanggaran_detail.*', 'konseling.id as id_konseling', 'tahun_ajaran.tahun_ajaran', 'konseling.keterangan as status', 'pelanggaran.guru_id', 'jenis_pelanggaran.poin as poin', 'jurusan.jurusan', 'pelanggaran.kehadiran_id', 'pelanggaran.nama_petugas', 'jenis_pelanggaran.jenis_pelanggaran', 'siswa.nis', 'siswa.nama_lengkap as nama_siswa', 'siswa.rombel', 'guru.nama_lengkap as nama_guru', 'kehadiran.jenis_kehadiran'])
-                ->where('pelanggaran_detail.tahun_ajaran_id', $ta[0]->id)
-                ->groupBy('pelanggaran_detail.nis')
-                ->get();
-                }
-                return DataTables::of($data)
-                ->addColumn('total', function ($data) {
-                    $set = Settings::all();
-                    $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif )->get();
-                    $pelanggarans = DB::table('konseling')
-                    ->selectRaw('sum(jenis_pelanggaran.poin) as total')
                     ->join('pelanggaran_detail', 'pelanggaran_detail.id', '=', 'konseling.pelanggaran_detail_id')
+                    ->join('tahun_ajaran', 'tahun_ajaran.id', '=', 'pelanggaran_detail.tahun_ajaran_id')
                     ->join('pelanggaran', 'pelanggaran.id', '=', 'pelanggaran_detail.pelanggaran_id')
                     ->join('jenis_pelanggaran', 'jenis_pelanggaran.id', '=', 'pelanggaran_detail.jenis_pelanggaran_id')
-                    ->where('pelanggaran_detail.nis','=', $data->nis)
-                    ->where('pelanggaran_detail.tahun_ajaran_id','=',$ta[0]->id)
+                    ->join('siswa', 'siswa.nis', '=', 'pelanggaran_detail.nis')
+                    ->join('jurusan', 'jurusan.id', '=', 'siswa.jurusan')
+                    ->join('guru', 'guru.id', '=', 'pelanggaran.guru_id')
+                    ->join('kehadiran', 'kehadiran.kode_kehadiran', '=', 'pelanggaran.kehadiran_id')
+                    ->select(['konseling.*', 'pelanggaran_detail.*', 'konseling.id as id_konseling', 'tahun_ajaran.tahun_ajaran', 'konseling.keterangan as status', 'pelanggaran.guru_id', 'jenis_pelanggaran.poin as poin', 'jurusan.jurusan', 'pelanggaran.kehadiran_id', 'pelanggaran.nama_petugas', 'jenis_pelanggaran.jenis_pelanggaran', 'siswa.nis', 'siswa.nama_lengkap as nama_siswa', 'siswa.rombel', 'guru.nama_lengkap as nama_guru', 'kehadiran.jenis_kehadiran'])
+                    ->where('pelanggaran_detail.tahun_ajaran_id', $request->filter_ta)
                     ->groupBy('pelanggaran_detail.nis')
                     ->get();
+            } else {
+                $data = DB::table('konseling')
+                    ->join('pelanggaran_detail', 'pelanggaran_detail.id', '=', 'konseling.pelanggaran_detail_id')
+                    ->join('tahun_ajaran', 'tahun_ajaran.id', '=', 'pelanggaran_detail.tahun_ajaran_id')
+                    ->join('pelanggaran', 'pelanggaran.id', '=', 'pelanggaran_detail.pelanggaran_id')
+                    ->join('jenis_pelanggaran', 'jenis_pelanggaran.id', '=', 'pelanggaran_detail.jenis_pelanggaran_id')
+                    ->join('siswa', 'siswa.nis', '=', 'pelanggaran_detail.nis')
+                    ->join('jurusan', 'jurusan.id', '=', 'siswa.jurusan')
+                    ->join('guru', 'guru.id', '=', 'pelanggaran.guru_id')
+                    ->join('kehadiran', 'kehadiran.kode_kehadiran', '=', 'pelanggaran.kehadiran_id')
+                    ->select(['konseling.*', 'pelanggaran_detail.*', 'konseling.id as id_konseling', 'tahun_ajaran.tahun_ajaran', 'konseling.keterangan as status', 'pelanggaran.guru_id', 'jenis_pelanggaran.poin as poin', 'jurusan.jurusan', 'pelanggaran.kehadiran_id', 'pelanggaran.nama_petugas', 'jenis_pelanggaran.jenis_pelanggaran', 'siswa.nis', 'siswa.nama_lengkap as nama_siswa', 'siswa.rombel', 'guru.nama_lengkap as nama_guru', 'kehadiran.jenis_kehadiran'])
+                    ->where('pelanggaran_detail.tahun_ajaran_id', $ta[0]->id)
+                    ->groupBy('pelanggaran_detail.nis')
+                    ->get();
+            }
+            return DataTables::of($data)
+                ->addColumn('total', function ($data) {
+                    $set = Settings::all();
+                    $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif)->get();
+                    $pelanggarans = DB::table('konseling')
+                        ->selectRaw('sum(jenis_pelanggaran.poin) as total')
+                        ->join('pelanggaran_detail', 'pelanggaran_detail.id', '=', 'konseling.pelanggaran_detail_id')
+                        ->join('pelanggaran', 'pelanggaran.id', '=', 'pelanggaran_detail.pelanggaran_id')
+                        ->join('jenis_pelanggaran', 'jenis_pelanggaran.id', '=', 'pelanggaran_detail.jenis_pelanggaran_id')
+                        ->where('pelanggaran_detail.nis', '=', $data->nis)
+                        ->where('pelanggaran_detail.tahun_ajaran_id', '=', $ta[0]->id)
+                        ->groupBy('pelanggaran_detail.nis')
+                        ->get();
                     return $pelanggarans[0]->total;
                 })
                 ->addColumn('action', function ($data) {
-                    return view('wakasis.rsiswa._action', [ 
+                    return view('wakasis.rsiswa._action', [
                         'model' => $data,
                         'show_url' => route('wakasis.wakasis.show.rsiswa', $data->id),
-    
+
                     ]);
                 })
                 ->rawColumns(['action'])
                 ->addIndexColumn()
                 ->make(true);
         }
-        
+
         return view('wakasis.index');
     }
 
     public function mulai_akumulasi_pelanggaran(Request $request)
     {
-            $set = Settings::all();
-            $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif )->get();
+        $set = Settings::all();
+        $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif)->get();
 
-            $tahunAjaranSekarang = $ta[0]->tahun_awal;
-            $idTahunAjaranSekarang = $ta[0]->id;
+        $tahunAjaranSekarang = $ta[0]->tahun_awal;
+        $idTahunAjaranSekarang = $ta[0]->id;
 
-            $tahunAjaranTahunLalu = $tahunAjaranSekarang - 1;
+        $tahunAjaranTahunLalu = $tahunAjaranSekarang - 1;
 
-            $taTahunLalu = TahunAjaran::where('tahun_awal', $tahunAjaranTahunLalu )->first();
+        $taTahunLalu = TahunAjaran::where('tahun_awal', $tahunAjaranTahunLalu)->first();
 
-            $idTaTahunLalu = $taTahunLalu->id;
+        $idTaTahunLalu = $taTahunLalu->id;
 
-            // return $idTaTahunLalu;
+        // return $idTaTahunLalu;
 
-            $id_jenis_pelanggaran = [25, 27, 28, 29, 30];
+        $id_jenis_pelanggaran = [25, 27, 28, 29, 30];
 
-            $pelanggaranAkumulasiTahunLalu =  PelanggaranDetail::where('status', 0)
-                                            ->whereIn('jenis_pelanggaran_id', $id_jenis_pelanggaran)
-                                            ->where('tahun_ajaran_id', $idTaTahunLalu)
-                                            ->get();
+        $pelanggaranAkumulasiTahunLalu =  PelanggaranDetail::where('status', 0)
+            ->whereIn('jenis_pelanggaran_id', $id_jenis_pelanggaran)
+            ->where('tahun_ajaran_id', $idTaTahunLalu)
+            ->get();
 
-            $idPelanggaranDetailTerakhir = PelanggaranDetail::max('id');
+        $idPelanggaranDetailTerakhir = PelanggaranDetail::max('id');
 
-            if(count($pelanggaranAkumulasiTahunLalu) != 0){
-                for($i = 0; $i < count($pelanggaranAkumulasiTahunLalu); $i++){  
-                    $x = $i+1; 
-                    $id = $idPelanggaranDetailTerakhir + $x;
+        if (count($pelanggaranAkumulasiTahunLalu) != 0) {
+            for ($i = 0; $i < count($pelanggaranAkumulasiTahunLalu); $i++) {
+                $x = $i + 1;
+                $id = $idPelanggaranDetailTerakhir + $x;
 
-                    $arrayPenambahanIdPelanggaranDetail = array('id' => $id);
+                $arrayPenambahanIdPelanggaranDetail = array('id' => $id);
 
-                    $arrayIdPelanggaranDetail = array($pelanggaranAkumulasiTahunLalu[$i]->id);
+                $arrayIdPelanggaranDetail = array($pelanggaranAkumulasiTahunLalu[$i]->id);
 
-                    $data = array(
-                        'pelanggaran_id' => $pelanggaranAkumulasiTahunLalu[$i]->pelanggaran_id,
-                        'nis'  => $pelanggaranAkumulasiTahunLalu[$i]->nis,
-                        'jenis_pelanggaran_id'  =>  $pelanggaranAkumulasiTahunLalu[$i]->jenis_pelanggaran_id,
-                        'tahun_ajaran_id'  => $idTahunAjaranSekarang,
-                        );
+                $data = array(
+                    'pelanggaran_id' => $pelanggaranAkumulasiTahunLalu[$i]->pelanggaran_id,
+                    'nis'  => $pelanggaranAkumulasiTahunLalu[$i]->nis,
+                    'jenis_pelanggaran_id'  =>  $pelanggaranAkumulasiTahunLalu[$i]->jenis_pelanggaran_id,
+                    'tahun_ajaran_id'  => $idTahunAjaranSekarang,
+                );
 
-                    $insert_data[] = $data;
+                $insert_data[] = $data;
 
-                    $dataArrayPenambahanIdPelanggaranDetail[] = $arrayPenambahanIdPelanggaranDetail;
+                $dataArrayPenambahanIdPelanggaranDetail[] = $arrayPenambahanIdPelanggaranDetail;
 
-                    $dataArrayIdPelanggaranDetail[] = implode(',',$arrayIdPelanggaranDetail);
+                $dataArrayIdPelanggaranDetail[] = implode(',', $arrayIdPelanggaranDetail);
 
-                    $pelanggaran_detail_update = PelanggaranDetail::where('id', $pelanggaranAkumulasiTahunLalu[$i]->id)->update(['status' => 1]);
-                    }  
-                    $intArray = array_map(
-                        function($value) { return (int)$value; },
-                        $dataArrayIdPelanggaranDetail
+                $pelanggaran_detail_update = PelanggaranDetail::where('id', $pelanggaranAkumulasiTahunLalu[$i]->id)->update(['status' => 1]);
+            }
+            $intArray = array_map(
+                function ($value) {
+                    return (int) $value;
+                },
+                $dataArrayIdPelanggaranDetail
+            );
+            // return $intArray;
+            // exit;
+            $save = PelanggaranDetail::insert($insert_data);
+            if ($save && $pelanggaran_detail_update) {
+                for ($j = 0; $j < count($dataArrayPenambahanIdPelanggaranDetail); $j++) {
+                    $konseling = Konseling::whereIn('pelanggaran_detail_id', $intArray)->get();
+                    //return $konseling;
+                    $datas = array(
+                        'pelanggaran_detail_id' => $dataArrayPenambahanIdPelanggaranDetail[$j]['id'],
+                        'deskripsi_penanganan' => $konseling[$j]['deskripsi_penanganan'],
+                        'hasil_konseling' => $konseling[$j]['hasil_konseling'],
+                        'rekomendasi' => $konseling[$j]['rekomendasi'],
+                        'konseler' => $konseling[$j]['konseler'],
+                        'keterangan' => $konseling[$j]['keterangan']
                     );
-                    // return $intArray;
-                    // exit;
-                    $save = PelanggaranDetail::insert($insert_data);
-                    if($save && $pelanggaran_detail_update){
-                        for($j=0; $j < count($dataArrayPenambahanIdPelanggaranDetail); $j++){
-                            $konseling = Konseling::whereIn('pelanggaran_detail_id', $intArray)->get();
-                            //return $konseling;
-                            $datas = array(
-                                'pelanggaran_detail_id' => $dataArrayPenambahanIdPelanggaranDetail[$j]['id'],
-                                'deskripsi_penanganan' => $konseling[$j]['deskripsi_penanganan'],
-                                'hasil_konseling' => $konseling[$j]['hasil_konseling'],
-                                'rekomendasi' => $konseling[$j]['rekomendasi'],
-                                'konseler' => $konseling[$j]['konseler'],
-                                'keterangan' => $konseling[$j]['keterangan']
-                            );
-                            $insert_data_kon[] = $datas; 
-                        }
+                    $insert_data_kon[] = $datas;
+                }
 
-                        Konseling::insert($insert_data_kon);
+                Konseling::insert($insert_data_kon);
 
-                        Session::flash('berhasil', 'Akumulasi data pelanggaran berhasil');
-                        return redirect()->route('wakasis.wakasis.apelanggaran');
-                    }else{
-                        Session::flash('gagal', 'Akumulasi data pelanggaran gagal');
-                        return redirect()->route('wakasis.wakasis.apelanggaran');
-                    }
-            }else{
-                Session::flash('kosong', 'Data pelanggaran tahun lalu tidak ada');
+                Session::flash('berhasil', 'Akumulasi data pelanggaran berhasil');
+                return redirect()->route('wakasis.wakasis.apelanggaran');
+            } else {
+                Session::flash('gagal', 'Akumulasi data pelanggaran gagal');
                 return redirect()->route('wakasis.wakasis.apelanggaran');
             }
+        } else {
+            Session::flash('kosong', 'Data pelanggaran tahun lalu tidak ada');
+            return redirect()->route('wakasis.wakasis.apelanggaran');
+        }
     }
 
     public function akumulasi_pelanggaran(Request $request)
     {
         $set = Settings::all();
-        $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif )->get();
+        $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif)->get();
         $idTahunAjaranSekarang = $ta[0]->id;
         $id_jenis_pelanggaran = [25, 27, 28, 29, 30];
-        if(request()->ajax())
-        {
-            if(!empty($request->filter_ta))
-            {
+        if (request()->ajax()) {
+            if (!empty($request->filter_ta)) {
                 $data = DB::table('pelanggaran_detail')
-                ->join('tahun_ajaran', 'tahun_ajaran.id', '=', 'pelanggaran_detail.tahun_ajaran_id')
-                ->join('pelanggaran', 'pelanggaran.id', '=', 'pelanggaran_detail.pelanggaran_id')
-                ->join('jenis_pelanggaran', 'jenis_pelanggaran.id', '=', 'pelanggaran_detail.jenis_pelanggaran_id') 
-                ->join('siswa', 'siswa.nis', '=', 'pelanggaran_detail.nis')
-                ->join('notif_pelanggaran', 'notif_pelanggaran.nis', '=', 'siswa.nis')
-                ->join('jurusan', 'jurusan.id', '=', 'siswa.jurusan')
-                ->join('konseling', 'konseling.pelanggaran_detail_id', '=', 'pelanggaran_detail.id')
-                ->join('guru', 'guru.id', '=', 'pelanggaran.guru_id')
-                ->join('kehadiran', 'kehadiran.kode_kehadiran', '=', 'pelanggaran.kehadiran_id')
-                ->select([ 'pelanggaran_detail.*', 'notif_pelanggaran.total_poin', 'konseling.keterangan', 'tahun_ajaran.tahun_ajaran', 'pelanggaran.guru_id', 'jenis_pelanggaran.poin as poin', 'jurusan.jurusan', 'pelanggaran.kehadiran_id', 'pelanggaran.nama_petugas', 'jenis_pelanggaran.jenis_pelanggaran', 'siswa.nis', 'siswa.nama_lengkap as nama_siswa', 'siswa.rombel', 'guru.nama_lengkap as nama_guru', 'kehadiran.jenis_kehadiran'])
-                ->whereIn('pelanggaran_detail.jenis_pelanggaran_id', $id_jenis_pelanggaran)
-                ->where('pelanggaran_detail.tahun_ajaran_id', $request->filter_ta)
-                ->get();
-            }else{
-                 $data = DB::table('pelanggaran_detail')
-                 ->join('tahun_ajaran', 'tahun_ajaran.id', '=', 'pelanggaran_detail.tahun_ajaran_id')
-                ->join('pelanggaran', 'pelanggaran.id', '=', 'pelanggaran_detail.pelanggaran_id')
-                ->join('jenis_pelanggaran', 'jenis_pelanggaran.id', '=', 'pelanggaran_detail.jenis_pelanggaran_id') 
-                ->join('siswa', 'siswa.nis', '=', 'pelanggaran_detail.nis')
-                ->join('notif_pelanggaran', 'notif_pelanggaran.nis', '=', 'siswa.nis')
-                ->join('jurusan', 'jurusan.id', '=', 'siswa.jurusan')
-                ->join('konseling', 'konseling.pelanggaran_detail_id', '=', 'pelanggaran_detail.id')
-                ->join('guru', 'guru.id', '=', 'pelanggaran.guru_id')
-                ->join('kehadiran', 'kehadiran.kode_kehadiran', '=', 'pelanggaran.kehadiran_id')
-                ->select([ 'pelanggaran_detail.*', 'notif_pelanggaran.total_poin', 'konseling.keterangan', 'tahun_ajaran.tahun_ajaran', 'pelanggaran.guru_id', 'jenis_pelanggaran.poin as poin', 'jurusan.jurusan', 'pelanggaran.kehadiran_id', 'pelanggaran.nama_petugas', 'jenis_pelanggaran.jenis_pelanggaran', 'siswa.nis', 'siswa.nama_lengkap as nama_siswa', 'siswa.rombel', 'guru.nama_lengkap as nama_guru', 'kehadiran.jenis_kehadiran'])
-                ->whereIn('pelanggaran_detail.jenis_pelanggaran_id', $id_jenis_pelanggaran)
-                ->get();
-
-                }
-                return DataTables::of($data)
+                    ->join('tahun_ajaran', 'tahun_ajaran.id', '=', 'pelanggaran_detail.tahun_ajaran_id')
+                    ->join('pelanggaran', 'pelanggaran.id', '=', 'pelanggaran_detail.pelanggaran_id')
+                    ->join('jenis_pelanggaran', 'jenis_pelanggaran.id', '=', 'pelanggaran_detail.jenis_pelanggaran_id')
+                    ->join('siswa', 'siswa.nis', '=', 'pelanggaran_detail.nis')
+                    ->join('notif_pelanggaran', 'notif_pelanggaran.nis', '=', 'siswa.nis')
+                    ->join('jurusan', 'jurusan.id', '=', 'siswa.jurusan')
+                    ->join('konseling', 'konseling.pelanggaran_detail_id', '=', 'pelanggaran_detail.id')
+                    ->join('guru', 'guru.id', '=', 'pelanggaran.guru_id')
+                    ->join('kehadiran', 'kehadiran.kode_kehadiran', '=', 'pelanggaran.kehadiran_id')
+                    ->select(['pelanggaran_detail.*', 'notif_pelanggaran.total_poin', 'konseling.keterangan', 'tahun_ajaran.tahun_ajaran', 'pelanggaran.guru_id', 'jenis_pelanggaran.poin as poin', 'jurusan.jurusan', 'pelanggaran.kehadiran_id', 'pelanggaran.nama_petugas', 'jenis_pelanggaran.jenis_pelanggaran', 'siswa.nis', 'siswa.nama_lengkap as nama_siswa', 'siswa.rombel', 'guru.nama_lengkap as nama_guru', 'kehadiran.jenis_kehadiran'])
+                    ->whereIn('pelanggaran_detail.jenis_pelanggaran_id', $id_jenis_pelanggaran)
+                    ->where('pelanggaran_detail.tahun_ajaran_id', $request->filter_ta)
+                    ->get();
+            } else {
+                $data = DB::table('pelanggaran_detail')
+                    ->join('tahun_ajaran', 'tahun_ajaran.id', '=', 'pelanggaran_detail.tahun_ajaran_id')
+                    ->join('pelanggaran', 'pelanggaran.id', '=', 'pelanggaran_detail.pelanggaran_id')
+                    ->join('jenis_pelanggaran', 'jenis_pelanggaran.id', '=', 'pelanggaran_detail.jenis_pelanggaran_id')
+                    ->join('siswa', 'siswa.nis', '=', 'pelanggaran_detail.nis')
+                    ->join('notif_pelanggaran', 'notif_pelanggaran.nis', '=', 'siswa.nis')
+                    ->join('jurusan', 'jurusan.id', '=', 'siswa.jurusan')
+                    ->join('konseling', 'konseling.pelanggaran_detail_id', '=', 'pelanggaran_detail.id')
+                    ->join('guru', 'guru.id', '=', 'pelanggaran.guru_id')
+                    ->join('kehadiran', 'kehadiran.kode_kehadiran', '=', 'pelanggaran.kehadiran_id')
+                    ->select(['pelanggaran_detail.*', 'notif_pelanggaran.total_poin', 'konseling.keterangan', 'tahun_ajaran.tahun_ajaran', 'pelanggaran.guru_id', 'jenis_pelanggaran.poin as poin', 'jurusan.jurusan', 'pelanggaran.kehadiran_id', 'pelanggaran.nama_petugas', 'jenis_pelanggaran.jenis_pelanggaran', 'siswa.nis', 'siswa.nama_lengkap as nama_siswa', 'siswa.rombel', 'guru.nama_lengkap as nama_guru', 'kehadiran.jenis_kehadiran'])
+                    ->whereIn('pelanggaran_detail.jenis_pelanggaran_id', $id_jenis_pelanggaran)
+                    ->get();
+            }
+            return DataTables::of($data)
                 ->addColumn('action', function ($data) {
-                    return view('wakasis.rsiswa._action', [ 
+                    return view('wakasis.rsiswa._action', [
                         'model' => $data,
                         'show_url' => route('wakasis.wakasis.show.rsiswa', $data->id),
-    
+
                     ]);
                 })
                 ->rawColumns(['action'])
                 ->addIndexColumn()
                 ->make(true);
-              
-
         }
 
         $ta = TahunAjaran::all(['id', 'tahun_ajaran']);
-        return view('wakasis.akumulasi_pelanggaran.index', compact('ta') );
+        return view('wakasis.akumulasi_pelanggaran.index', compact('ta'));
     }
 
     public function create()
@@ -263,32 +258,29 @@ class WakasisController extends Controller
     public function rekap_guru(Request $request)
     {
         $set = Settings::all();
-        $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif )->get();
-        if(request()->ajax())
-        {
-            if(!empty($request->filter_ta))
-            {
+        $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif)->get();
+        if (request()->ajax()) {
+            if (!empty($request->filter_ta)) {
                 $data = DB::table('izin')
-                ->join('guru', 'guru.id', '=', 'izin.guru_id')
-                ->join('izin_detail', 'izin_detail.izin_id', '=', 'izin.id')
-                ->join('kehadiran', 'kehadiran.kode_kehadiran', '=', 'izin.kehadiran_id')
-                ->join('tahun_ajaran', 'tahun_ajaran.id', '=', 'izin.tahun_ajaran_id')
-                ->select(['izin.*','tahun_ajaran.tahun_ajaran', 'guru.nama_lengkap as guru', 'kehadiran.jenis_kehadiran as kehadiran', 'izin.nama_petugas as petugas'])
-                ->where('izin.tahun_ajaran_id','=', $request->filter_ta)
-                ->groupBy('izin.guru_id') 
-                ->get();
-
-            }else{
+                    ->join('guru', 'guru.id', '=', 'izin.guru_id')
+                    ->join('izin_detail', 'izin_detail.izin_id', '=', 'izin.id')
+                    ->join('kehadiran', 'kehadiran.kode_kehadiran', '=', 'izin.kehadiran_id')
+                    ->join('tahun_ajaran', 'tahun_ajaran.id', '=', 'izin.tahun_ajaran_id')
+                    ->select(['izin.*', 'tahun_ajaran.tahun_ajaran', 'guru.nama_lengkap as guru', 'kehadiran.jenis_kehadiran as kehadiran', 'izin.nama_petugas as petugas'])
+                    ->where('izin.tahun_ajaran_id', '=', $request->filter_ta)
+                    ->groupBy('izin.guru_id')
+                    ->get();
+            } else {
                 $data = DB::table('izin')
-                ->join('guru', 'guru.id', '=', 'izin.guru_id')
-                ->join('izin_detail', 'izin_detail.izin_id', '=', 'izin.id')
-                ->join('kehadiran', 'kehadiran.kode_kehadiran', '=', 'izin.kehadiran_id')
-                ->join('tahun_ajaran', 'tahun_ajaran.id', '=', 'izin.tahun_ajaran_id')
-                ->select(['izin.*','tahun_ajaran.tahun_ajaran', 'guru.nama_lengkap as guru', 'kehadiran.jenis_kehadiran as kehadiran', 'izin.nama_petugas as petugas'])
-                ->where('izin.tahun_ajaran_id','=', $ta[0]->id)
-                ->groupBy('izin.guru_id') 
-                ->get();
-                }
+                    ->join('guru', 'guru.id', '=', 'izin.guru_id')
+                    ->join('izin_detail', 'izin_detail.izin_id', '=', 'izin.id')
+                    ->join('kehadiran', 'kehadiran.kode_kehadiran', '=', 'izin.kehadiran_id')
+                    ->join('tahun_ajaran', 'tahun_ajaran.id', '=', 'izin.tahun_ajaran_id')
+                    ->select(['izin.*', 'tahun_ajaran.tahun_ajaran', 'guru.nama_lengkap as guru', 'kehadiran.jenis_kehadiran as kehadiran', 'izin.nama_petugas as petugas'])
+                    ->where('izin.tahun_ajaran_id', '=', $ta[0]->id)
+                    ->groupBy('izin.guru_id')
+                    ->get();
+            }
             return DataTables::of($data)
                 ->addColumn('action', function ($data) {
                     return view('wakasis.rguru._action', [
@@ -307,11 +299,11 @@ class WakasisController extends Controller
             ->join('izin_detail', 'izin_detail.izin_id', '=', 'izin.id')
             ->join('kehadiran', 'kehadiran.kode_kehadiran', '=', 'izin.kehadiran_id')
             ->join('tahun_ajaran', 'tahun_ajaran.id', '=', 'izin.tahun_ajaran_id')
-            ->select(['izin.*','tahun_ajaran.tahun_ajaran', 'guru.nama_lengkap as guru', 'kehadiran.jenis_kehadiran as kehadiran', 'izin.nama_petugas as petugas'])
-            ->where('izin.tahun_ajaran_id','=',$ta[0]->id)
-            ->groupBy('izin.guru_id') 
+            ->select(['izin.*', 'tahun_ajaran.tahun_ajaran', 'guru.nama_lengkap as guru', 'kehadiran.jenis_kehadiran as kehadiran', 'izin.nama_petugas as petugas'])
+            ->where('izin.tahun_ajaran_id', '=', $ta[0]->id)
+            ->groupBy('izin.guru_id')
             ->get();
-        
+
         $ta = TahunAjaran::all(['id', 'tahun_ajaran']);
         return view('wakasis.rguru.index', compact('ta', 'kehadiran_guru'));
     }
@@ -450,7 +442,7 @@ class WakasisController extends Controller
     {
 
         $set = Settings::all();
-        $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif )->get();
+        $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif)->get();
 
         $pelanggaran = DB::table('konseling')
             ->join('pelanggaran_detail', 'pelanggaran_detail.id', '=', 'konseling.pelanggaran_detail_id')
@@ -481,8 +473,8 @@ class WakasisController extends Controller
         $kelas = DB::table('kelas')->get();
         $guru = DB::table('guru')->get();
         $kehadiran = DB::table('kehadiran')->get();
-        $dataPelanggaran = $pelanggaran; 
-        $pelanggaranSemua = $pelanggaran_semua; 
+        $dataPelanggaran = $pelanggaran;
+        $pelanggaranSemua = $pelanggaran_semua;
 
         // return $pelanggaranSemua;
 
@@ -493,7 +485,7 @@ class WakasisController extends Controller
     {
 
         $set = Settings::all();
-        $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif )->get();
+        $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif)->get();
 
         $pelanggaran = DB::table('konseling')
             ->leftjoin('pelanggaran_detail', 'pelanggaran_detail.id', '=', 'konseling.pelanggaran_detail_id')
@@ -524,8 +516,8 @@ class WakasisController extends Controller
         $kelas = DB::table('kelas')->get();
         $guru = DB::table('guru')->get();
         $kehadiran = DB::table('kehadiran')->get();
-        $dataPelanggaran = $pelanggaran; 
-        $pelanggaranSemua = $pelanggaran_semua; 
+        $dataPelanggaran = $pelanggaran;
+        $pelanggaranSemua = $pelanggaran_semua;
 
         // return $pelanggaranSemua;
 
@@ -535,7 +527,7 @@ class WakasisController extends Controller
     public function show_rekap_guru($id)
     {
         $set = Settings::all();
-        $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif )->get();
+        $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif)->get();
         $kehadiran_guru = DB::table('izin')
             ->join('guru', 'guru.id', '=', 'izin.guru_id')
             ->join('kehadiran', 'kehadiran.kode_kehadiran', '=', 'izin.kehadiran_id')
@@ -597,7 +589,7 @@ class WakasisController extends Controller
             ->select(['izin.*', 'guru.nama_lengkap as guru', 'kehadiran.jenis_kehadiran as kehadiran', 'izin.nama_petugas as petugas'])
             ->get();
 
-        $data = $kehadiran_guru; 
+        $data = $kehadiran_guru;
         $kehadiran = $kehadiran_guru_semua;
         $count_hadir = count($hadir);
         $count_thtk = count($thtk);
@@ -610,28 +602,28 @@ class WakasisController extends Controller
     public function show_rekap_perubahan_data($id)
     {
         $pelanggaran = DB::table('pelanggaran_detail')
-        ->join('pelanggaran', 'pelanggaran.id', '=', 'pelanggaran_detail.pelanggaran_id')
-        ->join('jenis_pelanggaran', 'jenis_pelanggaran.id', '=', 'pelanggaran_detail.jenis_pelanggaran_id')
-        ->join('siswa', 'siswa.nis', '=', 'pelanggaran_detail.nis')
-        ->join('guru', 'guru.id', '=', 'pelanggaran.guru_id')
-        ->join('kehadiran', 'kehadiran.kode_kehadiran', '=', 'pelanggaran.kehadiran_id')
-        ->WHERE('pelanggaran_detail.id','=',$id)
-        ->select(['pelanggaran_detail.*', 'pelanggaran.guru_id', 'pelanggaran.kehadiran_id', 'pelanggaran.nama_petugas', 'jenis_pelanggaran.jenis_pelanggaran','kehadiran.kode_kehadiran', 'siswa.*', 'siswa.nama_lengkap as nama_siswa', 'siswa.rombel', 'guru.nama_lengkap as nama_guru', 'kehadiran.jenis_kehadiran'])
-        ->orderBy('pelanggaran_detail.id', 'desc')
-        ->get();
+            ->join('pelanggaran', 'pelanggaran.id', '=', 'pelanggaran_detail.pelanggaran_id')
+            ->join('jenis_pelanggaran', 'jenis_pelanggaran.id', '=', 'pelanggaran_detail.jenis_pelanggaran_id')
+            ->join('siswa', 'siswa.nis', '=', 'pelanggaran_detail.nis')
+            ->join('guru', 'guru.id', '=', 'pelanggaran.guru_id')
+            ->join('kehadiran', 'kehadiran.kode_kehadiran', '=', 'pelanggaran.kehadiran_id')
+            ->WHERE('pelanggaran_detail.id', '=', $id)
+            ->select(['pelanggaran_detail.*', 'pelanggaran.guru_id', 'pelanggaran.kehadiran_id', 'pelanggaran.nama_petugas', 'jenis_pelanggaran.jenis_pelanggaran', 'kehadiran.kode_kehadiran', 'siswa.*', 'siswa.nama_lengkap as nama_siswa', 'siswa.rombel', 'guru.nama_lengkap as nama_guru', 'kehadiran.jenis_kehadiran'])
+            ->orderBy('pelanggaran_detail.id', 'desc')
+            ->get();
 
         $logPelanggaran = DB::table('pelanggaran_log')
-        ->join('pelanggaran_detail', 'pelanggaran_detail.id', '=', 'pelanggaran_log.pelanggaran_detail_id')
-        ->join('pelanggaran', 'pelanggaran.id', '=', 'pelanggaran_detail.pelanggaran_id')
-        ->join('jenis_pelanggaran', 'jenis_pelanggaran.id', '=', 'pelanggaran_log.jenis_pelanggaran_id')
-        ->join('siswa', 'siswa.nis', '=', 'pelanggaran_detail.nis')
-        ->join('guru', 'guru.id', '=', 'pelanggaran.guru_id')
-        ->join('kehadiran', 'kehadiran.kode_kehadiran', '=', 'pelanggaran_log.kehadiran_id')
-        ->WHERE('pelanggaran_log.pelanggaran_detail_id','=',$id)
-        ->WHERE('pelanggaran_log.ajukan','=','Diajukan')
-        ->select(['pelanggaran_log.*', 'pelanggaran_detail.pelanggaran_id',  'pelanggaran_detail.nis', 'jenis_pelanggaran.jenis_pelanggaran','kehadiran.kode_kehadiran', 'siswa.*', 'siswa.nama_lengkap as nama_siswa', 'siswa.rombel', 'guru.nama_lengkap as nama_guru', 'kehadiran.jenis_kehadiran'])
-        ->orderBy('pelanggaran_detail.id', 'desc')
-        ->get();
+            ->join('pelanggaran_detail', 'pelanggaran_detail.id', '=', 'pelanggaran_log.pelanggaran_detail_id')
+            ->join('pelanggaran', 'pelanggaran.id', '=', 'pelanggaran_detail.pelanggaran_id')
+            ->join('jenis_pelanggaran', 'jenis_pelanggaran.id', '=', 'pelanggaran_log.jenis_pelanggaran_id')
+            ->join('siswa', 'siswa.nis', '=', 'pelanggaran_detail.nis')
+            ->join('guru', 'guru.id', '=', 'pelanggaran.guru_id')
+            ->join('kehadiran', 'kehadiran.kode_kehadiran', '=', 'pelanggaran_log.kehadiran_id')
+            ->WHERE('pelanggaran_log.pelanggaran_detail_id', '=', $id)
+            ->WHERE('pelanggaran_log.ajukan', '=', 'Diajukan')
+            ->select(['pelanggaran_log.*', 'pelanggaran_detail.pelanggaran_id',  'pelanggaran_detail.nis', 'jenis_pelanggaran.jenis_pelanggaran', 'kehadiran.kode_kehadiran', 'siswa.*', 'siswa.nama_lengkap as nama_siswa', 'siswa.rombel', 'guru.nama_lengkap as nama_guru', 'kehadiran.jenis_kehadiran'])
+            ->orderBy('pelanggaran_detail.id', 'desc')
+            ->get();
 
         // return count($logPelanggaran);
 
@@ -652,21 +644,21 @@ class WakasisController extends Controller
 
         // query cari tahun ajaran altif
         $set = Settings::all();
-        $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif )->get();
+        $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif)->get();
 
         // query cari data log pelanggaran dari data pelanggaran yang di ubah oleh petugas piket
         $logPelanggaran = DB::table('pelanggaran_log')
-        ->join('pelanggaran_detail', 'pelanggaran_detail.id', '=', 'pelanggaran_log.pelanggaran_detail_id')
-        ->join('pelanggaran', 'pelanggaran.id', '=', 'pelanggaran_detail.pelanggaran_id')
-        ->join('jenis_pelanggaran', 'jenis_pelanggaran.id', '=', 'pelanggaran_log.jenis_pelanggaran_id')
-        ->join('siswa', 'siswa.nis', '=', 'pelanggaran_detail.nis')
-        ->join('guru', 'guru.id', '=', 'pelanggaran.guru_id')
-        ->join('kehadiran', 'kehadiran.kode_kehadiran', '=', 'pelanggaran_log.kehadiran_id')
-        ->WHERE('pelanggaran_log.pelanggaran_detail_id','=',$id)
-        ->WHERE('pelanggaran_log.ajukan','=','Diajukan')
-        ->select(['pelanggaran_log.*', 'pelanggaran_detail.pelanggaran_id',  'pelanggaran_detail.nis', 'jenis_pelanggaran.jenis_pelanggaran','kehadiran.kode_kehadiran', 'siswa.*', 'siswa.nama_lengkap as nama_siswa', 'siswa.rombel', 'guru.nama_lengkap as nama_guru', 'kehadiran.jenis_kehadiran'])
-        ->orderBy('pelanggaran_detail.id', 'desc')
-        ->get();
+            ->join('pelanggaran_detail', 'pelanggaran_detail.id', '=', 'pelanggaran_log.pelanggaran_detail_id')
+            ->join('pelanggaran', 'pelanggaran.id', '=', 'pelanggaran_detail.pelanggaran_id')
+            ->join('jenis_pelanggaran', 'jenis_pelanggaran.id', '=', 'pelanggaran_log.jenis_pelanggaran_id')
+            ->join('siswa', 'siswa.nis', '=', 'pelanggaran_detail.nis')
+            ->join('guru', 'guru.id', '=', 'pelanggaran.guru_id')
+            ->join('kehadiran', 'kehadiran.kode_kehadiran', '=', 'pelanggaran_log.kehadiran_id')
+            ->WHERE('pelanggaran_log.pelanggaran_detail_id', '=', $id)
+            ->WHERE('pelanggaran_log.ajukan', '=', 'Diajukan')
+            ->select(['pelanggaran_log.*', 'pelanggaran_detail.pelanggaran_id',  'pelanggaran_detail.nis', 'jenis_pelanggaran.jenis_pelanggaran', 'kehadiran.kode_kehadiran', 'siswa.*', 'siswa.nama_lengkap as nama_siswa', 'siswa.rombel', 'guru.nama_lengkap as nama_guru', 'kehadiran.jenis_kehadiran'])
+            ->orderBy('pelanggaran_detail.id', 'desc')
+            ->get();
 
         // query cari data pelanggaran detail sesuai id dari tabe; pelanggaran_detail
         $pDetail = PelanggaranDetail::findOrFail($id);
@@ -679,7 +671,7 @@ class WakasisController extends Controller
 
         // update data log pelanggaran
         $pLogDetail->ajukan = "Diterima";
-        
+
         // update data pelanggaran detail
         $pDetail->ajukan = "Diterima";
         $pDetail->jenis_pelanggaran_id = $logPelanggaran[0]->jenis_pelanggaran_id;
@@ -689,7 +681,7 @@ class WakasisController extends Controller
         $pelanggaran->kehadiran_id = $logPelanggaran[0]->kehadiran_id;
         $pelanggaran->nama_petugas = $logPelanggaran[0]->nama_petugas;
 
-        if($pLogDetail->update() && $pDetail->update() && $pelanggaran->update() ){
+        if ($pLogDetail->update() && $pDetail->update() && $pelanggaran->update()) {
             Session::flash('success', 'Data berhasil disetujui');
             return redirect()->route('wakasis.wakasis.rperdata');
         }
@@ -825,76 +817,72 @@ class WakasisController extends Controller
     public function dataTableRekapSiswa(Request $request)
     {
         $set = Settings::all();
-        $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif )->get();
-        if(request()->ajax())
-        {
-            if(!empty($request->filter_ta))
-            {
+        $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif)->get();
+        if (request()->ajax()) {
+            if (!empty($request->filter_ta)) {
                 $pelanggaran_siswa = DB::table('konseling')
-                ->join('pelanggaran_detail', 'pelanggaran_detail.id', '=', 'konseling.pelanggaran_detail_id')
-                ->join('tahun_ajaran', 'tahun_ajaran.id', '=', 'pelanggaran_detail.tahun_ajaran_id')
-                ->join('pelanggaran', 'pelanggaran.id', '=', 'pelanggaran_detail.pelanggaran_id')
-                ->join('jenis_pelanggaran', 'jenis_pelanggaran.id', '=', 'pelanggaran_detail.jenis_pelanggaran_id') 
-                ->join('siswa', 'siswa.nis', '=', 'pelanggaran_detail.nis')
-                ->join('jurusan', 'jurusan.id', '=', 'siswa.jurusan')
-                ->join('guru', 'guru.id', '=', 'pelanggaran.guru_id')
-                ->join('kehadiran', 'kehadiran.kode_kehadiran', '=', 'pelanggaran.kehadiran_id')
-                ->selectRaw(['sum(jenis_pelanggaran.poin) as total', 'konseling.*', 'pelanggaran_detail.*', 'konseling.id as id_konseling', 'konseling.keterangan as status', 'pelanggaran.guru_id', 'jenis_pelanggaran.poin as poin', 'jurusan.jurusan', 'pelanggaran.kehadiran_id', 'pelanggaran.nama_petugas', 'jenis_pelanggaran.jenis_pelanggaran', 'siswa.nis', 'siswa.nama_lengkap as nama_siswa', 'siswa.rombel', 'guru.nama_lengkap as nama_guru', 'kehadiran.jenis_kehadiran'])
-                ->select(['konseling.*', 'pelanggaran_detail.*', 'konseling.id as id_konseling', 'tahun_ajaran.tahun_ajaran', 'konseling.keterangan as status', 'pelanggaran.guru_id', 'jenis_pelanggaran.poin as poin', 'jurusan.jurusan', 'pelanggaran.kehadiran_id', 'pelanggaran.nama_petugas', 'jenis_pelanggaran.jenis_pelanggaran', 'siswa.nis', 'siswa.nama_lengkap as nama_siswa', 'siswa.rombel', 'guru.nama_lengkap as nama_guru', 'kehadiran.jenis_kehadiran'])
-                ->where('pelanggaran_detail.tahun_ajaran_id', $request->filter_ta)
-                ->groupBy('pelanggaran_detail.nis')
-                ->get();
-            }else{
-                $pelanggaran_siswa = DB::table('konseling')
-                ->join('pelanggaran_detail', 'pelanggaran_detail.id', '=', 'konseling.pelanggaran_detail_id')
-                ->join('tahun_ajaran', 'tahun_ajaran.id', '=', 'pelanggaran_detail.tahun_ajaran_id')
-                ->join('pelanggaran', 'pelanggaran.id', '=', 'pelanggaran_detail.pelanggaran_id')
-                ->join('jenis_pelanggaran', 'jenis_pelanggaran.id', '=', 'pelanggaran_detail.jenis_pelanggaran_id') 
-                ->join('siswa', 'siswa.nis', '=', 'pelanggaran_detail.nis')
-                ->join('jurusan', 'jurusan.id', '=', 'siswa.jurusan')
-                ->join('guru', 'guru.id', '=', 'pelanggaran.guru_id')
-                ->join('kehadiran', 'kehadiran.kode_kehadiran', '=', 'pelanggaran.kehadiran_id')
-                ->where('pelanggaran_detail.tahun_ajaran_id','=',$ta[0]->id)
-                ->select(['konseling.*', 'pelanggaran_detail.*', 'konseling.id as id_konseling', 'tahun_ajaran.tahun_ajaran', 'konseling.keterangan as status', 'pelanggaran.guru_id', 'jenis_pelanggaran.poin as poin', 'jurusan.jurusan', 'pelanggaran.kehadiran_id', 'pelanggaran.nama_petugas', 'jenis_pelanggaran.jenis_pelanggaran', 'siswa.nis', 'siswa.nama_lengkap as nama_siswa', 'siswa.rombel', 'guru.nama_lengkap as nama_guru', 'kehadiran.jenis_kehadiran'])
-                ->groupBy('pelanggaran_detail.nis')
-                ->get();
-                }
-                return DataTables::of($pelanggaran_siswa)
-                ->addColumn('total', function ($pelanggaran_siswa) {
-                    $pelanggarans = DB::table('konseling')
-                    ->selectRaw('sum(jenis_pelanggaran.poin) as total')
                     ->join('pelanggaran_detail', 'pelanggaran_detail.id', '=', 'konseling.pelanggaran_detail_id')
+                    ->join('tahun_ajaran', 'tahun_ajaran.id', '=', 'pelanggaran_detail.tahun_ajaran_id')
                     ->join('pelanggaran', 'pelanggaran.id', '=', 'pelanggaran_detail.pelanggaran_id')
                     ->join('jenis_pelanggaran', 'jenis_pelanggaran.id', '=', 'pelanggaran_detail.jenis_pelanggaran_id')
-                    ->where('pelanggaran_detail.nis','=', $pelanggaran_siswa->nis)
-                    ->where('pelanggaran_detail.tahun_ajaran_id','=',$ta[0]->id)
+                    ->join('siswa', 'siswa.nis', '=', 'pelanggaran_detail.nis')
+                    ->join('jurusan', 'jurusan.id', '=', 'siswa.jurusan')
+                    ->join('guru', 'guru.id', '=', 'pelanggaran.guru_id')
+                    ->join('kehadiran', 'kehadiran.kode_kehadiran', '=', 'pelanggaran.kehadiran_id')
+                    ->selectRaw(['sum(jenis_pelanggaran.poin) as total', 'konseling.*', 'pelanggaran_detail.*', 'konseling.id as id_konseling', 'konseling.keterangan as status', 'pelanggaran.guru_id', 'jenis_pelanggaran.poin as poin', 'jurusan.jurusan', 'pelanggaran.kehadiran_id', 'pelanggaran.nama_petugas', 'jenis_pelanggaran.jenis_pelanggaran', 'siswa.nis', 'siswa.nama_lengkap as nama_siswa', 'siswa.rombel', 'guru.nama_lengkap as nama_guru', 'kehadiran.jenis_kehadiran'])
+                    ->select(['konseling.*', 'pelanggaran_detail.*', 'konseling.id as id_konseling', 'tahun_ajaran.tahun_ajaran', 'konseling.keterangan as status', 'pelanggaran.guru_id', 'jenis_pelanggaran.poin as poin', 'jurusan.jurusan', 'pelanggaran.kehadiran_id', 'pelanggaran.nama_petugas', 'jenis_pelanggaran.jenis_pelanggaran', 'siswa.nis', 'siswa.nama_lengkap as nama_siswa', 'siswa.rombel', 'guru.nama_lengkap as nama_guru', 'kehadiran.jenis_kehadiran'])
+                    ->where('pelanggaran_detail.tahun_ajaran_id', $request->filter_ta)
                     ->groupBy('pelanggaran_detail.nis')
                     ->get();
+            } else {
+                $pelanggaran_siswa = DB::table('konseling')
+                    ->join('pelanggaran_detail', 'pelanggaran_detail.id', '=', 'konseling.pelanggaran_detail_id')
+                    ->join('tahun_ajaran', 'tahun_ajaran.id', '=', 'pelanggaran_detail.tahun_ajaran_id')
+                    ->join('pelanggaran', 'pelanggaran.id', '=', 'pelanggaran_detail.pelanggaran_id')
+                    ->join('jenis_pelanggaran', 'jenis_pelanggaran.id', '=', 'pelanggaran_detail.jenis_pelanggaran_id')
+                    ->join('siswa', 'siswa.nis', '=', 'pelanggaran_detail.nis')
+                    ->join('jurusan', 'jurusan.id', '=', 'siswa.jurusan')
+                    ->join('guru', 'guru.id', '=', 'pelanggaran.guru_id')
+                    ->join('kehadiran', 'kehadiran.kode_kehadiran', '=', 'pelanggaran.kehadiran_id')
+                    ->where('pelanggaran_detail.tahun_ajaran_id', '=', $ta[0]->id)
+                    ->select(['konseling.*', 'pelanggaran_detail.*', 'konseling.id as id_konseling', 'tahun_ajaran.tahun_ajaran', 'konseling.keterangan as status', 'pelanggaran.guru_id', 'jenis_pelanggaran.poin as poin', 'jurusan.jurusan', 'pelanggaran.kehadiran_id', 'pelanggaran.nama_petugas', 'jenis_pelanggaran.jenis_pelanggaran', 'siswa.nis', 'siswa.nama_lengkap as nama_siswa', 'siswa.rombel', 'guru.nama_lengkap as nama_guru', 'kehadiran.jenis_kehadiran'])
+                    ->groupBy('pelanggaran_detail.nis')
+                    ->get();
+            }
+            return DataTables::of($pelanggaran_siswa)
+                ->addColumn('total', function ($pelanggaran_siswa) {
+                    $pelanggarans = DB::table('konseling')
+                        ->selectRaw('sum(jenis_pelanggaran.poin) as total')
+                        ->join('pelanggaran_detail', 'pelanggaran_detail.id', '=', 'konseling.pelanggaran_detail_id')
+                        ->join('pelanggaran', 'pelanggaran.id', '=', 'pelanggaran_detail.pelanggaran_id')
+                        ->join('jenis_pelanggaran', 'jenis_pelanggaran.id', '=', 'pelanggaran_detail.jenis_pelanggaran_id')
+                        ->where('pelanggaran_detail.nis', '=', $pelanggaran_siswa->nis)
+                        ->where('pelanggaran_detail.tahun_ajaran_id', '=', $ta[0]->id)
+                        ->groupBy('pelanggaran_detail.nis')
+                        ->get();
                     return $pelanggarans[0]->total;
                 })
                 ->addColumn('action', function ($pelanggaran_siswa) {
-                    return view('wakasis.rsiswa._action', [ 
+                    return view('wakasis.rsiswa._action', [
                         'model' => $pelanggaran_siswa,
                         'show_url' => route('wakasis.wakasis.show.rsiswa', $pelanggaran_siswa->id),
-    
+
                     ]);
                 })
                 ->rawColumns(['action'])
                 ->addIndexColumn()
                 ->make(true);
         }
-
-     
     }
 
     public function dataTableNotifPelanggaran()
     {
         $set = Settings::all();
-        $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif )->get();
+        $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif)->get();
         $notif_pelanggaran = DB::table('notif_pelanggaran')
             ->join('siswa', 'siswa.nis', '=', 'notif_pelanggaran.nis')
-            ->select(['notif_pelanggaran.*','siswa.nama_lengkap','siswa.rombel'])
-            ->where('notif_pelanggaran.tahun_ajaran_id','=',$ta[0]->id)
+            ->select(['notif_pelanggaran.*', 'siswa.nama_lengkap', 'siswa.rombel'])
+            ->where('notif_pelanggaran.tahun_ajaran_id', '=', $ta[0]->id)
             ->orderBy('siswa.nama_lengkap', 'asc')
             ->get();
         return DataTables::of($notif_pelanggaran)
@@ -913,15 +901,15 @@ class WakasisController extends Controller
     public function dataTableRekapGuru()
     {
         $set = Settings::all();
-        $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif )->get();
+        $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif)->get();
         $kehadiran_guru = DB::table('izin')
             ->join('guru', 'guru.id', '=', 'izin.guru_id')
             ->join('izin_detail', 'izin_detail.izin_id', '=', 'izin.id')
             ->join('kehadiran', 'kehadiran.kode_kehadiran', '=', 'izin.kehadiran_id')
             ->join('tahun_ajaran', 'tahun_ajaran.id', '=', 'izin.tahun_ajaran_id')
-            ->select(['izin.*','tahun_ajaran.tahun_ajaran', 'guru.nama_lengkap as guru', 'kehadiran.jenis_kehadiran as kehadiran', 'izin.nama_petugas as petugas'])
-            ->where('izin.tahun_ajaran_id','=',$ta[0]->id)
-            ->groupBy('izin.guru_id') 
+            ->select(['izin.*', 'tahun_ajaran.tahun_ajaran', 'guru.nama_lengkap as guru', 'kehadiran.jenis_kehadiran as kehadiran', 'izin.nama_petugas as petugas'])
+            ->where('izin.tahun_ajaran_id', '=', $ta[0]->id)
+            ->groupBy('izin.guru_id')
             ->get();
         return DataTables::of($kehadiran_guru)
             ->addColumn('action', function ($kehadiran) {
@@ -941,17 +929,12 @@ class WakasisController extends Controller
         $izins = DB::table('izin_gerbang')
             ->join('izin_detail', 'izin_gerbang.izin_detail_id', '=', 'izin_detail.id')
             ->join('siswa', 'izin_detail.nis', '=', 'siswa.nis')
-            ->select([
-                'izin_gerbang.id',
-                'siswa.nama_lengkap as siswa',
-                'izin_detail.keterangan_izin as keterangan',
-                'izin_gerbang.masuk as masuk',
-                'izin_gerbang.keluar as keluar',
-                'izin_gerbang.datetime as jam'
-            ])
+            ->join('jurusan', 'jurusan.id', '=', 'siswa.jurusan')
+            ->select(['izin_gerbang.id', 'siswa.nama_lengkap as nama_siswa', 'siswa.rombel as kelas_siswa', 'siswa.jurusan as jurusan_siswa', 'jurusan.jurusan', 'izin_detail.keterangan_izin as keterangan', DB::raw("(CASE WHEN izin_gerbang.masuk='Y' AND izin_gerbang.keluar='Y' THEN " . DB::raw("concat(time(izin_detail.datetime),' - ',time(izin_gerbang.datetime))") . " WHEN izin_gerbang.masuk='N' OR izin_gerbang.datetime IS NULL AND izin_gerbang.keluar='Y' THEN " . DB::raw("concat(time(izin_detail.datetime),' - ','Tidak Kembali')") . "  END) as lama_izin")])
             ->get();
         return DataTables::of($izins)
-            //->rawColumns(['action'])
+
+            ->rawColumns(['action'])
             ->make(true);
     }
 
@@ -978,7 +961,7 @@ class WakasisController extends Controller
     public function dataTablePerubahanData()
     {
         $set = Settings::all();
-        $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif )->get();
+        $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif)->get();
         $perubahan_data = DB::table('pelanggaran_detail')
             ->join('pelanggaran', 'pelanggaran.id', '=', 'pelanggaran_detail.pelanggaran_id')
             ->join('jenis_pelanggaran', 'jenis_pelanggaran.id', '=', 'pelanggaran_detail.jenis_pelanggaran_id')
@@ -986,8 +969,8 @@ class WakasisController extends Controller
             ->join('guru', 'guru.id', '=', 'pelanggaran.guru_id')
             ->join('kehadiran', 'kehadiran.kode_kehadiran', '=', 'pelanggaran.kehadiran_id')
             ->select(['pelanggaran_detail.*', 'pelanggaran.guru_id', 'pelanggaran.kehadiran_id', 'pelanggaran.nama_petugas', 'jenis_pelanggaran.jenis_pelanggaran', 'siswa.nama_lengkap as nama_siswa', 'siswa.rombel', 'guru.nama_lengkap as nama_guru', 'kehadiran.jenis_kehadiran'])
-            ->where('pelanggaran_detail.ajukan','=',"Diajukan")
-            ->where('pelanggaran_detail.tahun_ajaran_id','=',$ta[0]->id)
+            ->where('pelanggaran_detail.ajukan', '=', "Diajukan")
+            ->where('pelanggaran_detail.tahun_ajaran_id', '=', $ta[0]->id)
             ->get();
         return DataTables::of($perubahan_data)
             ->addColumn('action', function ($perubahan_data) {
@@ -1004,29 +987,29 @@ class WakasisController extends Controller
 
     public function cetak_rekap_siswa($id)
     {
-        if( $id == 0 ){
+        if ($id == 0) {
             $export = (new RekapPelanggaranSiswaCustomExport)->download('REKAP DATA PELANGGARAN SISWA.xlsx');
-        }else{
+        } else {
             $export = (new RekapPelanggaranSiswaExport($id))->download('REKAP DATA PELANGGARAN SISWA.xlsx');
         }
         return $export;
-    } 
+    }
 
     public function cetak_rekap_guru($id)
     {
-        if( $id == 0 ){
+        if ($id == 0) {
             $export = (new RekapKehadiranGuruCustomExport)->download('REKAP DATA KEHADIRAN GURU.xlsx');
-        }else{
+        } else {
             $export = (new RekapKehadiranGuruExport($id))->download('REKAP DATA KEHADIRAN GURU.xlsx');
         }
         return $export;
-    } 
+    }
 
     public function cetak_rekap_guru_detail($id)
     {
 
         $set = Settings::all();
-        $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif )->get();
+        $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif)->get();
         $kehadiran_guru = DB::table('izin')
             ->join('guru', 'guru.id', '=', 'izin.guru_id')
             ->join('kehadiran', 'kehadiran.kode_kehadiran', '=', 'izin.kehadiran_id')
@@ -1110,7 +1093,7 @@ class WakasisController extends Controller
     {
 
         $set = Settings::all();
-        $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif )->get();
+        $ta = TahunAjaran::where('tahun_awal', $set[0]->tahun_aktif)->get();
 
         $pelanggaran = DB::table('konseling')
             ->join('pelanggaran_detail', 'pelanggaran_detail.id', '=', 'konseling.pelanggaran_detail_id')
@@ -1136,19 +1119,17 @@ class WakasisController extends Controller
             ->WHERE('pelanggaran_detail.tahun_ajaran_id', '=', $ta[0]->id)
             ->select(['konseling.*', 'pelanggaran_detail.*', 'konseling.id as id_konseling', 'konseling.keterangan as status', 'pelanggaran.guru_id', 'jurusan.jurusan', 'pelanggaran.kehadiran_id', 'pelanggaran.nama_petugas', 'jenis_pelanggaran.jenis_pelanggaran', 'jenis_pelanggaran.poin', 'siswa.nama_lengkap as nama_siswa', 'siswa.rombel', 'guru.nama_lengkap as nama_guru', 'kehadiran.jenis_kehadiran'])
             ->get();
-        
+
         $jpelanggaran = DB::table('jenis_pelanggaran')->get();
         $kelas = DB::table('kelas')->get();
         $guru = DB::table('guru')->get();
         $kehadiran = DB::table('kehadiran')->get();
-        $dataPelanggaran = $pelanggaran; 
-        $pelanggaranSemua = $pelanggaran_semua; 
+        $dataPelanggaran = $pelanggaran;
+        $pelanggaranSemua = $pelanggaran_semua;
 
         $pdf = PDF::loadView('wakasis.rsiswa.pdf_siswa_detail', compact('pelanggaranSemua', 'pelanggaran', 'jpelanggaran', 'kelas', 'kehadiran', 'guru', 'dataPelanggaran'));
 
         // Preview
         return $pdf->stream();
     }
-
-    
 }

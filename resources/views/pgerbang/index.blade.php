@@ -30,11 +30,9 @@
 
                             <th>Nama</th>
                             <th>Keterangan</th>
-                            <th>Masuk</th>
                             <th>Keluar</th>
-                            <th>Tidak Masuk</th>
-                            <th>Jam</th>
-                            <th></th>
+                            <th>Masuk</th>
+                            <th>Foto</th>
                         </tr>
                     </thead>
                     <tfoot>
@@ -42,18 +40,28 @@
 
                             <th>Nama</th>
                             <th>Keterangan</th>
-                            <th>Masuk</th>
                             <th>Keluar</th>
-                            <th>Tidak Masuk</th>
-                            <th>Jam</th>
-                            <th></th>
+                            <th>Masuk</th>
+                            <th>Foto</th>
                         </tr>
                     </tfoot>
                     <tbody>
 
                     </tbody>
                 </table>
-                <div class="modal" id="absenModal" tabindex="-1" role="dialog">
+                <!--  <form action="{{route('pgerbang.pgerbang.store')}}" method="post">
+
+
+                    {{csrf_field()}}
+                    <input type="hidden" value="Y" name="keluar">
+                    <input type="hidden" value="Y" name="masuk">
+                    <input type="hidden" name="id" id="izin_id">
+                    <input type="hidden" name="button_action" id="button_action" value="update">
+                    <input type="submit" class="btn btn-primary" name="submit" id="action" value="Simpan">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+
+                </form>-->
+                <!-- <div class="modal" id="absenModal" tabindex="-1" role="dialog">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <form action="{{route('pgerbang.pgerbang.store')}}" method="post" id="absen_form">
@@ -68,7 +76,7 @@
                                     <span id="form_output"></span>
                                     <div class="form-group">
                                         <label for="title">Masuk</label>
-                                        <!--<input type="text" name="masuk" class="form-control" id="masuk">-->
+                                        <input type="text" name="masuk" class="form-control" id="masuk">
                                         <select class="form-control" name="masuk" id="masuk">
                                             <option value="Y">Ya</option>
                                             <option value="N">Tidak</option>
@@ -98,7 +106,7 @@
                             </form>
                         </div>
                     </div>
-                </div>
+                </div>-->
             </div>
         </div>
     </div>
@@ -130,43 +138,56 @@
                     name: 'keterangan'
                 },
                 {
-                    data: 'masuk',
-                    name: 'masuk',
-                    render: function(data) {
-                        if (data == 'Y') {
-                            return "Ya";
-                        } else {
-                            return "Tidak";
-                        }
-                    }
+                    data: 'column_keluar',
+                    name: 'column_keluar',
+                    orderable: false,
+                    action: false
+                },
+                {
+                    data: 'column_masuk',
+                    name: 'column_masuk',
+                    orderable: false,
+                    action: false
+                },
+                /* {
+                     data: 'keluar',
+                     name: 'keluar',
+                     render: function(data) {
+                         if (data == 'Y') {
+                             return "Ya";
+                         } else {
+                             return "Tidak";
+                         }
+                     }
+                 },
 
-                },
-                {
-                    data: 'keluar',
-                    name: 'keluar',
-                    render: function(data) {
-                        if (data == 'Y') {
-                            return "Ya";
-                        } else {
-                            return "Tidak";
-                        }
-                    }
-                },
-                {
-                    data: 'tidak_masuk',
-                    name: 'tidak_masuk',
-                    render: function(data) {
-                        if (data == 'Y') {
-                            return "Ya";
-                        } else {
-                            return "Tidak";
-                        }
-                    }
-                },
+                 {
+                     data: 'masuk',
+                     name: 'masuk',
+                     render: function(data) {
+                         if (data == 'Y') {
+                             return "Ya";
+                         } else {
+                             return "Tidak";
+                         }
+                     }
+
+                 },
+                 /*  {
+                       data: 'tidak_masuk',
+                       name: 'tidak_masuk',
+                       render: function(data) {
+                           if (data == 'Y') {
+                               return "Ya";
+                           } else {
+                               return "Tidak";
+                           }
+                       }
+                   },
                 {
                     data: 'jam',
                     name: 'jam'
-                },
+                },   */
                 {
                     data: 'action',
                     name: 'action',
@@ -176,60 +197,62 @@
                 }
             ]
         });
+
     });
 
 
-    $('.modal-footer').on('click', '#button_action', function() {
-        //event.preventDefault();
-        var form_data = $(this).serialize();
-        //var id = $(this).attr("id");
+    /* $('.modal-footer').on('click', '#button_action', function() {
+         //event.preventDefault();
+         var form_data = $.fn.editable.defaults.mode = 'inline';$(this).serialize();
+         //var id = $(this).attr("id");
 
-        $.ajax({
-            url: "{{route('pgerbang.pgerbang.store')}}",
-            method: 'POST',
-            data: form_data,
-            dataType: 'json',
-            success: function(data) {
-                if (data.error.length > 0) {
-                    var error_html = '';
-                    for (var count = 0; cout < data.error.length; count++) {
-                        error_html += '<div class="alert alert-danger">' + data.error[count] + '</div>';
-                    }
-                    $('#form_output').html(error_html);
+         $.ajax({
+             url: "{{route('pgerbang.pgerbang.store')}}",
+             method: 'POST',
+             data: form_data,
+             dataType: 'json',
+             success: function(data) {
+                 if (data.error.length > 0) {
+                     var error_html = '';
+                 contacts/update    for (var count = 0; cout < data.error.length; count++) {
+                         error_html += '<div class="alert alert-danger">' + data.error[count] + '</div>';
+                     }
+                     $('#form_output').html(error_html);
 
-                } else {
-                    $('#form_output').html(data.success);
-                    $('#absen_form').modal('hide');
-                    $('#dataTable').DataTable().ajax.reload();
+                 } else {
+                     $('#form_output').html(data.success);
+                     $('#absen_form').modal('hide');
+                     $('#dataTable').DataTable().ajax.reload();
 
-                }
+                 }
 
-            }
+             }
 
-        })
-    })
+         })
+     })
 
-    $(document).on('click', '.edit', function() {
-        var id = $(this).attr("id");
-        $.ajax({
-            url: "{{route('pgerbang.pgerbang.edit'," + id + ")}}",
+     $(document).on('click', '.edit', function() {
+         var id = $(this).attr("id");
+         $.ajax({
+             url: "{{route('pgerbang.pgerbang.edit'," + id + ")}}",
 
-            method: 'get',
-            data: {
-                'id': id
-            },
-            dataType: 'json',
+             method: 'get',
+             data: {
+                 'id': id
+             },
+             dataType: 'json',
 
-            success: function(data) {
-                $('#izin_id').val(id);
-                $('#masuk').val(data.masuk);
-                $('#keluar').val(data.keluar);
-                $('#tidak_masuk').val(data.tidak_masuk);
-                $('#absenModal').modal('show');
-            }
+             success: function(data) {
+                 $('#izin_id').val(id);
+                 $('#masuk').val(data.masuk);
+                 $('#keluar').val(data.keluar);
+                 $('#tidak_masuk').val(data.tidak_masuk);
+                 $('#absenModal').modal('show');
+             }
 
-        })
+         })
 
-    })
+     })*/
+   
 </script>
 @endsection

@@ -13,6 +13,7 @@
       background-image: url("images/bg.jpg");
       background-repeat: no-repeat;
       background-size: cover;
+      background-position: center bottom;
     }
   </style>
   <!-- Bootstrap core CSS-->
@@ -25,8 +26,7 @@
 
 <body>
   <div class="container">
-    <div class="card card-login mx-auto mt-5">
-      <div class="card-header">Login</div>
+    <div class="card card-login mx-auto mt-5" style="margin-top:165px!important;">
       <div class="card-body">
         <form class="form-horizontal" method="POST" action="{{ route('login') }}">
             {{ csrf_field() }}

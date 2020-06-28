@@ -35,23 +35,21 @@
 
                             <th>Nama</th>
                             <th>Keterangan</th>
-                            <th>Masuk</th>
-                            <th>Keluar</th>
-                            <th>Tidak Masuk</th>
-                            <th>Jam Izin</th>
-                           
+                            <th>Jurusan</th>
+                            <th>Kelas</th>
+                            <!--  <th>Keterangan</th> -->
+                            <th>Lama Izin</th>
                         </tr>
                     </thead>
                     <tfoot>
                         <tr>
-
                             <th>Nama</th>
                             <th>Keterangan</th>
-                            <th>Masuk</th>
-                            <th>Keluar</th>
-                            <th>Tidak Masuk</th>
-                            <th>Jam Izin</th>
-                            
+                            <th>Jurusan</th>
+                            <th>Kelas</th>
+                            <!--  <th>Keterangan</th> -->
+                            <th>Lama Izin</th>
+
                         </tr>
                     </tfoot>
                     <tbody>
@@ -82,50 +80,39 @@
             columns: [
 
                 {
-                    data: 'siswa',
-                    name: 'siswa'
+                    data: 'nama_siswa',
+                    name: 'nama_siswa'
                 },
                 {
                     data: 'keterangan',
                     name: 'keterangan'
                 },
                 {
-                    data: 'masuk',
-                    name: 'masuk',
-                    render: function(data) {
-                        if (data == 'Y') {
-                            return "Ya";
-                        } else {
-                            return "Tidak";
-                        }
-                    }
+                    data: 'jurusan',
+                    name: 'jurusan',
+                    // render: function(data) {
+                    //     if (data == 'Y') {
+                    //         return "Ya";
+                    //     } else {
+                    //         return "Tidak";
+                    //     }
+                    // }
 
                 },
                 {
-                    data: 'keluar',
-                    name: 'keluar',
-                    render: function(data) {
-                        if (data == 'Y') {
-                            return "Ya";
-                        } else {
-                            return "Tidak";
-                        }
-                    }
+                    data: 'kelas_siswa',
+                    name: 'kelas_siswa'
+                    // render: function(data) {
+                    //     if (data == 'Y') {
+                    //         return "Ya";
+                    //     } else {
+                    //         return "Tidak";
+                    //     }
+                    // }
                 },
                 {
-                    data: 'tidak_masuk',
-                    name: 'tidak_masuk',
-                    render: function(data) {
-                        if (data == 'Y') {
-                            return "Ya";
-                        } else {
-                            return "Tidak";
-                        }
-                    }
-                },
-                {
-                    data: 'jam',
-                    name: 'jam'
+                    data: 'lama_izin',
+                    name: 'lama_izin'
                 }
 
 

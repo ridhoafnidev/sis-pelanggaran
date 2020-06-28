@@ -16,6 +16,7 @@ use Yajra\Datatables\Datatables;
 use Illuminate\Support\Facades\Validator;
 use DB;
 use Auth;
+use Carbon\Carbon;
 
 class IzinController extends Controller
 {
@@ -166,7 +167,8 @@ class IzinController extends Controller
                     $data = array(
                         'izin_id' => $pelanggaran->id,
                         'nis'  => str_pad($siswa[$count], 10, "0", STR_PAD_LEFT),
-                        'keterangan_izin'  => $pelanggarans[$count]
+                        'keterangan_izin'  => $pelanggarans[$count],
+                        'datetime' => Carbon::now()
                     );
                     $insert_data[] = $data;
                 }
