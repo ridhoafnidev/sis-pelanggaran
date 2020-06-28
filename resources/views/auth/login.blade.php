@@ -7,7 +7,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="IDBlog - IDStack Sample Blog Project from https://idstack.net">
   <meta name="author" content="https://idstack.net">
-  <title>IDBlog - IDStack Sample Blog Project Admin</title>
+  <title>ISekolah - Login</title>
+  <style>
+    body {
+      background-image: url("images/bg.jpg");
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+  </style>
   <!-- Bootstrap core CSS-->
   <link href="{{ asset('assets/blog-admin/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
   <!-- Custom fonts for this template-->
@@ -16,7 +23,7 @@
   <link href="{{ asset('assets/blog-admin/css/sb-admin.css') }}" rel="stylesheet">
 </head>
 
-<body class="bg-dark">
+<body>
   <div class="container">
     <div class="card card-login mx-auto mt-5">
       <div class="card-header">Login</div>
@@ -24,7 +31,7 @@
         <form class="form-horizontal" method="POST" action="{{ route('login') }}">
             {{ csrf_field() }}
             <div class="form-group">
-                <label for="email">E-Mail Address</label>
+                <label for="email">Username</label>
                 <input id="email" type="text" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" required autofocus>
                 @if ($errors->has('email'))
                     <span class="invalid-feedback">
@@ -49,9 +56,9 @@
             </div>
             <button class="btn btn-primary btn-block" type="submit">Login</button>
         </form>
-        <div class="text-center">
+        <!-- <div class="text-center">
             <a class="d-block small mt-3" href="{{ route('password.request') }}">Forgot Password?</a>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>

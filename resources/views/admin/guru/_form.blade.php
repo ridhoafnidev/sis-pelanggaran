@@ -28,7 +28,7 @@
     </div>
     <div class="form-group">
         <label for="title">Email</label>
-        {!! Form::email('email', null, ['class' => $errors->has('email') ? 'form-control is-invalid' : 'form-control', 'required' => 'required', 'autofocus' => 'autofocus']) !!}
+        {!! Form::text('email', null, ['class' => $errors->has('email') ? 'form-control is-invalid' : 'form-control', 'required' => 'required', 'autofocus' => 'autofocus']) !!}
         @if ($errors->has('email'))
             <span class="invalid-feedback">
                 <strong>{{ $errors->first('email') }}</strong>

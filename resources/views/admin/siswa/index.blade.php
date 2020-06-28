@@ -8,69 +8,105 @@
 @endsection
 
 @section('content')
-    <div class="container-fluid">
-        <!-- Breadcrumbs-->
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a href="#">Categories</a>
-            </li>
-            <li class="breadcrumb-item active">Table</li>
-        </ol>
-
-        <div class="card mb-3">
-            <div class="card-header">
-                <i class="fa fa-list"></i> Categories
-                <a href="{{ route('admin.categories.create') }}" class="btn btn-sm btn-primary">Add New</a>
+<div class="container-fluid">
+    <!-- Breadcrumbs--> 
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="#">Data Siswa</a>
+        </li>
+        <li class="breadcrumb-item active">Table</li>
+    </ol>
+    <div class="card mb-3">
+        <div class="card-header">
+            <i class="fa fa-list"></i> Data Siswa
+            <a href="{{ route('wakasis.wakasis.create') }}" class="btn btn-sm btn-primary">Tambah</a>
+            <div class="float-right form-inline" >
+                <!-- <input type="email" class="form-control mb-2 mr-sm-2" placeholder="Enter email" id="email"> -->
+                <a href="{{ route('admin.siswa.import') }}" name="filter" id="filter" class="btn btn-primary mb-2">Import</a> | 
+                <a href="" name="reset" id="reset" class="btn btn-warning mb-2">Export</a>
             </div>
-            <div class="card-body table-responsive">
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Slug</th>
-                                <th>Title</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tfoot>
-                            <tr>
-                                <th>ID</th>
-                                <th>Slug</th>
-                                <th>Title</th>
-                                <th></th>
-                            </tr>
-                        </tfoot>
-                        <tbody>
-                        
-                        </tbody>
-                    </table>
-                </div>
+        </div>
+        <div class="card-body table-responsive">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Nama</th>
+                            <th>NIS</th>
+                            <th>Alamat</th>
+                            <th>Jenis Kelamin</th>
+                            <th>Rombel</th>
+                            <th>Jurusan</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Nama</th>
+                            <th>NIS</th>
+                            <th>Alamat</th>
+                            <th>Jenis Kelamin</th>
+                            <th>Rombel</th>
+                            <th>Jurusan</th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-@endsection
+    @endsection
+ 
+    @section('assets-bottom')
+    <!-- Page level plugin JavaScript-->
+    <script src="{{ asset('assets/blog-admin/vendor/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('assets/blog-admin/vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+    <!-- Responsive examples -->
+    <script src="{{ asset('assets/blog-admin/vendor/datatables/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ asset('assets/blog-admin/vendor/datatables/responsive.bootstrap4.min.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            $("#dataTable").DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: "{{ route('api.datatable.data-siswa') }}",
+                columns: [{
+                        data: 'nama_lengkap',
+                        name: 'nama_lengkap'
+                    },
+                    {
+                        data: 'nis',
+                        name: 'nis'
+                    },
+                    {
+                        data: 'alamat',
+                        name: 'alamat'
+                    },
+                    {
+                        data: 'jenis_kelamin',
+                        name: 'jenis_kelamin'
+                    },
+                    {
+                        data: 'rombel',
+                        name: 'rombel'
+                    },
+                    {
+                        data: 'jurusan',
+                        name: 'jurusan'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false
+                    }
 
-@section('assets-bottom')
-<!-- Page level plugin JavaScript-->
-<script src="{{ asset('assets/blog-admin/vendor/datatables/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('assets/blog-admin/vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
-<!-- Responsive examples -->
-<script src="{{ asset('assets/blog-admin/vendor/datatables/dataTables.responsive.min.js') }}"></script>
-<script src="{{ asset('assets/blog-admin/vendor/datatables/responsive.bootstrap4.min.js') }}"></script>
-<script>
-    $(document).ready(function () {
-        $("#dataTable").DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: "{{ route('api.datatable.categories') }}",
-            columns: [
-                {data: 'id', name: 'id'},
-                {data: 'slug', name: 'slug'},
-                {data: 'title', name: 'title'},
-                {data: 'action', name: 'action', orderable: false, searchable: false}
-            ]
+
+                ]
+            });
         });
-    });
-</script>
-@endsection
+    </script>
+    @endsection

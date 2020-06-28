@@ -29,10 +29,10 @@
     <div class="form-group">
         <label for="role">Role</label>
 
-        {!! Form::select('admin', ['' => '-']+ App\Level::pluck('level', 'id')->all() , null, ['class' => $errors->has('category_id') ? 'form-control is-invalid' : 'form-control', 'required']) !!}
-        @if ($errors->has('category_id'))
+        {!! Form::select('role', ['' => '-']+ App\Level::pluck('level', 'level')->all() , null, ['class' => $errors->has('role') ? 'form-control is-invalid' : 'form-control', 'required']) !!}
+        @if ($errors->has('role'))
             <span class="invalid-feedback">
-                <strong>{{ $errors->first('category_id') }}</strong>
+                <strong>{{ $errors->first('role') }}</strong>
             </span>
         @endif
     </div>

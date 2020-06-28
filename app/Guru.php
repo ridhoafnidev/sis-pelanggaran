@@ -17,6 +17,7 @@ class Guru extends Authenticatable
 
     protected $table = 'guru'; //custom table name
     protected $primaryKey = 'id'; //custom id column
+    public $timestamps = false;
 
     protected $fillable = [
         'id', 'nip', 'nama_lengkap', 'no_hp', 'alamat', 'email', 'jenis_kelamin'

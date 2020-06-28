@@ -13,7 +13,7 @@ class GuruController extends Controller
     {
         $this->middleware('role:Administrator');
     }
-
+ 
     /**
      * Display a listing of the resource.
      *
@@ -43,9 +43,10 @@ class GuruController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'title' => 'required|string|min:3|unique:categories'
+            'email' => 'required|string|min:3'
         ]);
-        $request['slug'] = str_slug($request->get('title'), '-');
+
+        // $request['slug'] = str_slug($request->get('title'), '-');
 
         Guru::create($request->all());
 
@@ -85,13 +86,12 @@ class GuruController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->validate($request, [
-            'title' => 'required|string|min:3|unique:categories,title,' . $id
-        ]);
-        $request['slug'] = str_slug($request->get('title'), '-');
+        // $this->validate($request, [
+        //     'title' => 'required|string|min:3|unique:email,' 
+        // ]);
 
-        $category = Category::findOrFail($id);
-        $category->update($request->all());
+        $guru = Guru::findOrFail($id);
+        $guru->update($request->all());
 
         return redirect()->route('admin.guru.index');
 
@@ -105,7 +105,7 @@ class GuruController extends Controller
      */
     public function destroy($id)
     {
-        if (! Category::destroy($id)) return redirect()->back();
+        if (! Guru::destroy($id)) return redirect()->back();
         return redirect()->route('admin.guru.index');
     }
 
